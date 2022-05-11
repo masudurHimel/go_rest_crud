@@ -2,15 +2,25 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"go_rest/grocery"
+	"go_rest/model"
+	"log"
 )
 
 func main() {
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "HEELLOO!!"})
-	})
-	err := r.Run()
+	db, err := model.Database()
 	if err != nil {
-		return
+		log.Println(err)
 	}
+
+	db.DB()
+	router := gin.Default()
+
+	router.GET("/groceries", grocery.GetGroceries)
+	router.GET("/grocery/:id", grocery.GetGrocery)
+	router.POST("/grocery", grocery.PostGrocery)
+	router.PUT("/grocery/:id", grocery.UpdateGrocery)
+	router.DELETE("/grocery/:id", grocery.DeleteGrocery)
+
+	log.Fatal(router.Run(":8000"))
 }
